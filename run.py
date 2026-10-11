@@ -13,10 +13,10 @@ import yaml
 from radar import output
 from radar.models import Job
 from radar.score import dedupe, domain_gate, score, title_gate
-from radar.sources import adzuna, arbeitnow, bundesagentur, linkedin_email
+from radar.sources import adzuna, arbeitnow, bundesagentur, email_alerts, jooble, watchlist
 
-SOURCES = {"bundesagentur": bundesagentur, "arbeitnow": arbeitnow,
-           "adzuna": adzuna, "linkedin_email": linkedin_email}
+SOURCES = {"bundesagentur": bundesagentur, "arbeitnow": arbeitnow, "adzuna": adzuna,
+           "jooble": jooble, "email_alerts": email_alerts, "watchlist": watchlist}
 
 
 def load_fixtures(folder):
@@ -66,10 +66,14 @@ def main():
     jobs = sorted((score(j, cfg) for j in jobs), key=lambda j: -j.score)
     print(f"Domain gate + dedupe: {len(jobs)} jobs")
 
+    by_source = {}
+    for j in jobs:
+        for src in j.sources:
+            by_source[src] = by_source.get(src, 0) + 1
     output.write_jobs(jobs, os.path.join(args.out, "data", "jobs.csv"))
     rows = output.update_tracker(jobs, os.path.join(args.out, "data", "tracker.csv"))
     output.write_shortlist(jobs, rows, os.path.join(args.out, "SHORTLIST.md"),
-                           cfg["shortlist_size"], {"raw": len(raw), "kept": len(jobs)})
+                           cfg["shortlist_size"], {"raw": len(raw), "kept": len(jobs), "by_source": by_source})
     print("Wrote data/jobs.csv, data/tracker.csv, SHORTLIST.md")
 
 

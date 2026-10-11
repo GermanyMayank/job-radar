@@ -20,7 +20,71 @@ sources:
   bundesagentur: {enabled: true, pages_per_query: 2, page_size: 50}
   arbeitnow: {enabled: true, pages: 6}          # no search param, filtered locally
   adzuna: {enabled: true, pages_per_query: 1}   # needs ADZUNA_APP_ID / ADZUNA_APP_KEY secrets
-  linkedin_email: {enabled: true, days_back: 3, mailbox: INBOX}  # needs IMAP_USER / IMAP_PASSWORD
+  jooble: {enabled: true, pages_per_query: 1}   # needs JOOBLE_API_KEY secret
+
+  # Job alert emails in Mayank's Gmail (IMAP_USER / IMAP_PASSWORD). Name -> sender address fragment.
+  # Add a board here once its alert is set up; unknown senders are simply ignored.
+  email_alerts:
+    enabled: true
+    days_back: 3
+    mailbox: INBOX
+    senders:
+      linkedin: jobalerts-noreply@linkedin.com
+      stepstone: stepstone.de
+      indeed: indeed.com
+      xing: xing.com
+      glassdoor: glassdoor
+      jobware: jobware.de
+      stellenanzeigen: stellenanzeigen.de
+      kimeta: kimeta.de
+      jobvector: jobvector.de
+      greenjobs: greenjobs.de
+
+  # Solar / renewables employers. Name -> candidate slugs to probe on Personio, Greenhouse,
+  # Lever, Recruitee and SmartRecruiters. The run log lists which ones resolved.
+  watchlist:
+    enabled: true
+    companies:
+      Enpal: [enpal]
+      1KOMMA5°: [1komma5, 1komma5grad, einskommafuenf]
+      Zolar: [zolar]
+      Goldbeck Solar: [goldbecksolar, goldbeck-solar]
+      BayWa r.e.: [baywa-re, bayware, baywarenewableenergy]
+      Enerparc: [enerparc]
+      IBC Solar: [ibcsolar, ibc-solar]
+      Belectric: [belectric]
+      Wirsol: [wirsol]
+      Energiekontor: [energiekontor]
+      Sunnic Lighthouse: [sunnic, sunniclighthouse]
+      Greenovative: [greenovative]
+      MaxSolar: [maxsolar]
+      juwi: [juwi]
+      ABO Energy: [aboenergy, abo-energy, abowind]
+      Solarwatt: [solarwatt]
+      sonnen: [sonnen, sonnengroup]
+      Meyer Burger: [meyerburger]
+      priwatt: [priwatt]
+      Otovo: [otovo]
+      Svea Solar: [sveasolar, svea-solar]
+      Memodo: [memodo]
+      Krannich Solar: [krannich, krannichsolar]
+      Photon Energy: [photonenergy]
+      EWS Solar: [ews, ewssolar]
+      Hep Global: [hep, hepglobal, hep-global]
+      Encavis: [encavis]
+      Enviria: [enviria]
+      Solarcycle Energy: [solarcycle]
+      Sun Contracting: [suncontracting]
+      Engie Deutschland: [engie]
+      Statkraft: [statkraft]
+      RWE Renewables: [rwe]
+      EnBW: [enbw]
+      Vattenfall: [vattenfall]
+      Ørsted: [orsted]
+      Nordex: [nordex]
+      Enercon: [enercon]
+      Qualitas Energy: [qualitasenergy, qualitas-energy]
+      Solarize: [solarize]
 
 # Gate 1: title must contain one of these (case-insensitive substring)
 role_terms_title:
