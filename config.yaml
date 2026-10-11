@@ -1,10 +1,12 @@
-# Job Radar config for Mayank's search (Jr PM / project coordination in solar PV, Germany).
-# Edit freely; every run re-reads this file.
+# Job Radar configuration: junior PM / project coordination roles in solar PV, Germany.
+# Edit freely on GitHub; the next run picks up the changes.
+#
+# Sections: search settings, sources, filters (gates), scoring terms.
 
 lookback_days: 14          # ignore postings older than this
 shortlist_size: 25         # rows in SHORTLIST.md
 
-queries:                   # sent to Bundesagentur and Adzuna
+queries:                   # search terms sent to Bundesagentur, Adzuna and Jooble
   - Projektkoordinator Photovoltaik
   - Projektmanager Photovoltaik
   - Junior Projektleiter Photovoltaik
@@ -111,6 +113,8 @@ exclude_title_terms:
   - senior
   - head of
   - teamleit
+  - team lead
+  - teamlead
   - abteilungsleit
   - director
   - principal
