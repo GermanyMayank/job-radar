@@ -27,25 +27,43 @@ def collect(session, cfg):
     for q in cfg["queries"]:
         for page in range(1, sc.get("pages_per_query", 1) + 1):
             data = _search_page(session, q, page, sc.get("page_size", 50), cfg["lookback_days"])
-            items = (data or {}).get("stellenangebote") or []
+            data = data or {}
+            # v6 (current) uses "ergebnisliste"; v4 used "stellenangebote"
+            items = data.get("ergebnisliste") or data.get("stellenangebote") or []
             for s in items:
-                ort = s.get("arbeitsort") or {}
-                refnr = s.get("refnr", "")
-                jobs.append(Job(
-                    source="bundesagentur",
-                    source_id=refnr,
-                    title=s.get("titel") or s.get("beruf") or "",
-                    company=s.get("arbeitgeber", ""),
-                    location=", ".join(x for x in (ort.get("ort"), ort.get("region")) if x),
-                    url=f"https://www.arbeitsagentur.de/jobsuche/jobdetail/{refnr}",
-                    apply_url=s.get("externeUrl", ""),
-                    posted=(s.get("aktuelleVeroeffentlichungsdatum") or "")[:10],
-                ))
+                jobs.append(_to_job(s))
             if len(items) < sc.get("page_size", 50):
                 break
             time.sleep(0.5)
-    print(f"  bundesagentur: {len(jobs)} raw")
-    return jobs
+    # same posting returned by several queries -> keep one
+    uniq = {j.source_id: j for j in jobs}
+    print(f"  bundesagentur: {len(jobs)} raw, {len(uniq)} unique")
+    return list(uniq.values())
+
+
+def _to_job(s):
+    """Map either the v6 or the old v4 search item to a Job."""
+    refnr = s.get("referenznummer") or s.get("refnr", "")
+    locs = s.get("stellenlokationen")
+    if locs:
+        adr = (locs[0] or {}).get("adresse") or {}
+        location = ", ".join(x for x in (adr.get("ort"), (adr.get("region") or "").replace("_", " ").title()) if x)
+    else:
+        ort = s.get("arbeitsort") or {}
+        location = ", ".join(x for x in (ort.get("ort"), ort.get("region")) if x)
+    posted = (s.get("datumErsteVeroeffentlichung")
+              or (s.get("veroeffentlichungszeitraum") or {}).get("von")
+              or s.get("aktuelleVeroeffentlichungsdatum") or "")[:10]
+    return Job(
+        source="bundesagentur",
+        source_id=refnr,
+        title=s.get("stellenangebotsTitel") or s.get("titel") or s.get("hauptberuf") or s.get("beruf") or "",
+        company=s.get("firma") or s.get("arbeitgeber", ""),
+        location=location,
+        url=f"https://www.arbeitsagentur.de/jobsuche/jobdetail/{refnr}",
+        apply_url=s.get("externeURL") or s.get("externeUrl", ""),
+        posted=posted,
+    )
 
 
 def enrich(session, job):
@@ -57,6 +75,6 @@ def enrich(session, job):
     from radar.models import clean_text
     job.description = clean_text(data.get("stellenangebotsBeschreibung")
                                  or data.get("stellenbeschreibung") or "")
-    job.apply_url = job.apply_url or data.get("externeUrl") or data.get("allianzpartnerUrl") or ""
+    job.apply_url = job.apply_url or data.get("externeURL") or data.get("externeUrl") or data.get("allianzpartnerUrl") or ""
     time.sleep(0.3)
     return job
