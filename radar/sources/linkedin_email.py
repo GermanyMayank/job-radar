@@ -7,8 +7,10 @@ from radar.models import Job, clean_text
 
 SENDER = "jobalerts-noreply@linkedin.com"
 JOB_LINK = re.compile(r"https?://(?:[a-z]+\.)?linkedin\.com/(?:comm/)?jobs/view/(\d+)[^\s\"'<>]*", re.I)
-SKIP_LINES = re.compile(r"^(view job|apply|easy apply|actively recruiting|promoted|\d+ (school|company) alum|"
-                        r"be an early applicant|new|see all jobs|\W*)$", re.I)
+# Badge / status lines LinkedIn puts around each job; never a title, company or location.
+SKIP_LINES = re.compile(r"(^view job|^apply|easy apply|actively (hiring|recruiting)|early applicant|"
+                        r"promoted|\balumni?\b|\bconnections?\b|\bapplicants?\b|^new$|see all jobs|"
+                        r"^\d+ (school|company)|^\W*$)", re.I)
 
 
 def parse_alert(text, html_, posted=""):
@@ -26,7 +28,7 @@ def parse_alert(text, html_, posted=""):
         j = i - 1
         while j >= 0 and len(prev) < 3:
             cand = lines[j]
-            if cand and not SKIP_LINES.match(cand) and not JOB_LINK.search(cand) and not cand.startswith("-----"):
+            if cand and not SKIP_LINES.search(cand) and not JOB_LINK.search(cand) and not cand.startswith("-----"):
                 prev.insert(0, cand)
             elif JOB_LINK.search(cand) or cand.startswith("-----"):
                 break
