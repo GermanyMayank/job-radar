@@ -47,7 +47,8 @@ def _to_job(s):
     locs = s.get("stellenlokationen")
     if locs:
         adr = (locs[0] or {}).get("adresse") or {}
-        location = ", ".join(x for x in (adr.get("ort"), (adr.get("region") or "").replace("_", " ").title()) if x)
+        ort, region = adr.get("ort") or "", (adr.get("region") or "").replace("_", " ").title()
+        location = ort if region and region.lower() in ort.lower() else ", ".join(x for x in (ort, region) if x)
     else:
         ort = s.get("arbeitsort") or {}
         location = ", ".join(x for x in (ort.get("ort"), ort.get("region")) if x)
