@@ -22,6 +22,38 @@ View job: https://www.linkedin.com/comm/jobs/view/4087654321/?trk=x
 See all jobs: https://www.linkedin.com/comm/jobs/search
 """
 
+REAL_FORMAT = """Your job alert for projektmanager pv
+---------------------------------------------------------
+Junior Projektmanager in der Projektsteuerung (m/w/d)
+Fichtner
+Stuttgart Region
+View job: https://www.linkedin.com/comm/jobs/view/4300000001/?trackingId=a
+
+---------------------------------------------------------
+Projektingenieur Photovoltaik (m/w/d)
+Nordex Group
+Hamburg, Germany
+This company is actively hiring
+View job: https://www.linkedin.com/comm/jobs/view/4300000002/?trackingId=b
+
+---------------------------------------------------------
+Projektkoordinator Netzanschluss
+Deutsche Bahn
+Lehrte, Lower Saxony, Germany
+Be an early applicant
+12 connections work here
+View job: https://www.linkedin.com/comm/jobs/view/4300000003/?trackingId=c
+"""
+
+def test_linkedin_badge_lines():
+    jobs = parse_alert(REAL_FORMAT, "")
+    got = [(j.title, j.company, j.location) for j in jobs]
+    assert got == [
+        ("Junior Projektmanager in der Projektsteuerung (m/w/d)", "Fichtner", "Stuttgart Region"),
+        ("Projektingenieur Photovoltaik (m/w/d)", "Nordex Group", "Hamburg, Germany"),
+        ("Projektkoordinator Netzanschluss", "Deutsche Bahn", "Lehrte, Lower Saxony, Germany"),
+    ], got
+
 def test_linkedin_parser():
     jobs = parse_alert(ALERT, "")
     assert [j.source_id for j in jobs] == ["4012345678", "4087654321"]
@@ -126,5 +158,5 @@ def test_dedupe_company_name_variants():
 
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
-        if name.startswith("test_") and name not in ("test_linkedin_parser", "test_status_survives_rerun", "test_dedupe_and_sales_penalty"):
+        if name.startswith("test_") and name not in ("test_linkedin_parser", "test_linkedin_badge_lines", "test_status_survives_rerun", "test_dedupe_and_sales_penalty"):
             fn(); print("PASS", name)
