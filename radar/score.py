@@ -11,7 +11,9 @@ GERMAN_C1 = re.compile(
     r"(deutsch\w*[^.\n]{0,60}\b(c1|c2|verhandlungssicher|fließend|fliessend|muttersprach)"
     r"|\b(c1|c2|verhandlungssicher\w*|fließend\w*|fliessend\w*|sehr gut\w*|exzellent\w*)\b[^.\n]{0,40}deutsch"
     r"|fluent\s+(in\s+)?german|german[^.\n]{0,30}\b(fluent|native|c1|c2|business)\b|native\s+german)", re.I)
-YEARS = re.compile(r"(\d{1,2})\s*\+?\s*(?:-\s*\d+\s*)?(?:jahre|years)", re.I)
+YEARS = re.compile(r"(\d{1,2})\s*\+?\s*(?:-\s*\d+\s*)?(?:jahre?n?|years?)\b[^.\n]{0,40}"
+                   r"(berufserfahrung|erfahrung|experience)|"
+                   r"(berufserfahrung|erfahrung|experience)[^.\n]{0,25}?(\d{1,2})\s*\+?\s*(?:jahre?n?|years?)", re.I)
 DE_WORDS = re.compile(r"\b(und|die|der|wir|sie|mit|für|ihre|bei|eine)\b", re.I)
 EN_WORDS = re.compile(r"\b(and|the|we|you|with|for|your|our|will|are)\b", re.I)
 
@@ -23,6 +25,12 @@ def norm_company(c):
 def norm_title(t):
     t = GENDER.sub(" ", (t or "").lower())
     return " ".join(re.sub(r"[^a-z0-9äöüß ]+", " ", t).split())
+
+
+def has_word(text, terms):
+    """Whole-word match (so 'hse' does not hit 'Wechsel', 'sap' not 'sapient')."""
+    low = (text or "").lower()
+    return [t for t in terms if re.search(r"(?<![a-zäöüß])" + re.escape(t) + r"(?![a-zäöüß])", low)]
 
 
 def has_any(text, terms):
@@ -88,7 +96,8 @@ def score(job, cfg, today=None):
         pts += 10
 
     # Seniority (15)
-    yrs = [int(m.group(1)) for m in YEARS.finditer(desc) if int(m.group(1)) < 30]
+    yrs = [int(m.group(1) or m.group(4)) for m in YEARS.finditer(desc)]
+    yrs = [y for y in yrs if 1 <= y <= 15]
     if has_any(f"{title} {desc[:600]}", cfg["junior_terms"]):
         pts += 15
         why.append("junior/entry level")
@@ -102,7 +111,7 @@ def score(job, cfg, today=None):
         pts += 10
 
     # CV skills overlap (15)
-    skills = has_any(desc, cfg["cv_skills"])
+    skills = has_word(desc, cfg["cv_skills"])
     pts += min(15, 3 * len(skills))
     if skills:
         why.append("skills: " + ", ".join(skills[:5]))
@@ -116,7 +125,7 @@ def score(job, cfg, today=None):
 
     # Penalties
     if GERMAN_C1.search(desc):
-        pts -= 15
+        pts -= 25
         flags.append("fluent/C1 German asked")
     elif desc and len(DE_WORDS.findall(desc)) > 2 * max(1, len(EN_WORDS.findall(desc))):
         pts -= 5
