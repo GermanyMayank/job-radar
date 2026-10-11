@@ -63,16 +63,25 @@ def parse_alert(text, html_, posted=""):
 
 
 def collect(session, cfg):
-    user, pw = os.getenv("IMAP_USER"), os.getenv("IMAP_PASSWORD")
+    user = (os.getenv("IMAP_USER") or "").strip()
+    pw = "".join((os.getenv("IMAP_PASSWORD") or "").split())   # Google shows app passwords with spaces
     if not (user and pw):
         print("  linkedin_email: skipped (no IMAP_USER / IMAP_PASSWORD)")
         return []
+    name, _, domain = user.partition("@")
+    print(f"  linkedin_email: logging in as {name[:2]}***@{domain or '(no domain!)'}, "
+          f"password length {len(pw)} (Gmail app passwords are 16)")
     sc = cfg["sources"]["linkedin_email"]
     since = (date.today() - timedelta(days=sc.get("days_back", 3))).strftime("%d-%b-%Y")
     jobs = []
     imap = imaplib.IMAP4_SSL(os.getenv("IMAP_HOST", "imap.gmail.com"))
     try:
-        imap.login(user, pw)
+        try:
+            imap.login(user, pw)
+        except imaplib.IMAP4.error as e:
+            print(f"  linkedin_email: login rejected ({e}). Check: full Gmail address, "
+                  "2-Step Verification on, 16-char app password from that same account.")
+            return []
         imap.select(sc.get("mailbox", "INBOX"), readonly=True)   # never marks or changes mail
         _, ids = imap.search(None, f'(FROM "{SENDER}" SINCE {since})')
         for mid in ids[0].split():
