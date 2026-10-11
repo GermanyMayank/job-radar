@@ -13,7 +13,7 @@ concurrency: job-radar
 jobs:
   radar:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,6 +28,7 @@ jobs:
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}
       - name: Commit results
         run: |
           git config user.name "job-radar-bot"
