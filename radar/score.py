@@ -38,6 +38,10 @@ def has_any(text, terms):
     return [t for t in terms if t in low]
 
 
+def email_sources(cfg):
+    return set(cfg["sources"].get("email_alerts", {}).get("senders", {}))
+
+
 def title_gate(job, cfg):
     t = job.title.lower()
     if not t or has_any(t, cfg["exclude_title_terms"]):
@@ -47,8 +51,10 @@ def title_gate(job, cfg):
 
 def domain_gate(job, cfg):
     blob = f" {job.title} {job.company} {job.description} ".lower()
-    if job.source == "linkedin" and not job.description:
-        return True    # alerts come from searches Mayank set up; keep, score will reflect thin data
+    if job.source in email_sources(cfg) and not job.description:
+        return True    # alerts come from solar searches Mayank set up; score reflects the thin data
+    if job.source == "watchlist":
+        return True    # employer is a solar/renewables company by definition
     return bool(has_any(blob, cfg["domain_terms"]))
 
 
@@ -56,8 +62,13 @@ def dedupe(jobs):
     """Same posting on several boards -> one record (keeps longest description, merges sources)."""
     by_company = {}
     for j in jobs:
-        j.key = f"{norm_company(j.company)}|{norm_title(j.title)}"
-        bucket = by_company.setdefault(norm_company(j.company), [])
+        comp = norm_company(j.company)
+        for known in by_company:       # same firm written longer/shorter on another board
+            if comp and known and (comp.startswith(known + " ") or known.startswith(comp + " ")):
+                comp = known
+                break
+        j.key = f"{comp}|{norm_title(j.title)}"
+        bucket = by_company.setdefault(comp, [])
         for other in bucket:
             if SequenceMatcher(None, norm_title(j.title), norm_title(other.title)).ratio() >= 0.88:
                 keep, drop = (j, other) if len(j.description) > len(other.description) else (other, j)

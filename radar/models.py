@@ -45,7 +45,7 @@ def clean_text(s: str) -> str:
     return s.strip()
 
 
-def get_json(session, url, params=None, headers=None, retries=3):
+def get_json(session, url, params=None, headers=None, retries=3, quiet=False):
     """GET with polite retry on 429/5xx. Returns parsed JSON or None."""
     h = {"User-Agent": UA, "Accept": "application/json"}
     h.update(headers or {})
@@ -53,7 +53,8 @@ def get_json(session, url, params=None, headers=None, retries=3):
         try:
             r = session.get(url, params=params, headers=h, timeout=30)
         except requests.RequestException as e:
-            print(f"  ! {url}: {e}")
+            if not quiet:
+                print(f"  ! {url}: {e}")
             time.sleep(2 * (attempt + 1))
             continue
         if r.status_code == 200:
@@ -64,6 +65,7 @@ def get_json(session, url, params=None, headers=None, retries=3):
         if r.status_code in (429, 500, 502, 503, 504):
             time.sleep(3 * (attempt + 1))
             continue
-        print(f"  ! {url} -> HTTP {r.status_code}")
+        if not quiet:
+            print(f"  ! {url} -> HTTP {r.status_code}")
         return None
     return None

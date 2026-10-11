@@ -61,7 +61,9 @@ def write_shortlist(jobs, tracker_rows, path, size, run_stats):
     pick = [j for j in jobs if tracker_rows.get(j.key, {}).get("status", "new") in open_status][:size]
     new_today = {k for k, r in tracker_rows.items() if r.get("first_seen") == date.today().isoformat()}
     esc = lambda s: (s or "").replace("|", "/")
+    srcs = ", ".join(f"{k} {v}" for k, v in sorted(run_stats.get("by_source", {}).items()))
     lines = [f"# Job Radar shortlist ({date.today().isoformat()})", "",
+             f"Relevant jobs by source: {srcs or 'n/a'}.", "",
              f"Collected {run_stats['raw']} postings, {run_stats['kept']} passed filters, "
              f"{len(new_today)} new today. Status values for data/tracker.csv: `{STATUSES}`.", "",
              "| # | Score | Role | Company | Location | Posted | Why | Watch out | Links |",
@@ -69,7 +71,7 @@ def write_shortlist(jobs, tracker_rows, path, size, run_stats):
     for i, j in enumerate(pick, 1):
         links = f"[posting]({j.url})" + (f" / [apply]({j.apply_url})" if j.apply_url else "")
         star = " 🆕" if j.key in new_today else ""
-        lines.append(f"| {i} | **{j.score}** {j.bucket} | {esc(j.title)}{star} | {esc(j.company)} | "
+        lines.append(f"| {i} | **{j.score}** {j.bucket} | {esc(j.title)}{star} | {esc(j.company) or '(not given)'} | "
                      f"{esc(j.location)} | {j.posted} | {esc('; '.join(j.reasons))} | "
                      f"{esc('; '.join(j.flags))} | {links} |")
     if not pick:
