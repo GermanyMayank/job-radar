@@ -1,0 +1,82 @@
+[
+ {
+  "source": "bundesagentur",
+  "source_id": "10001-1",
+  "title": "Junior Projektkoordinator Photovoltaik (m/w/d)",
+  "company": "SonnenBau GmbH",
+  "location": "Nürnberg, Bayern",
+  "url": "https://example.org/1",
+  "posted": "2026-10-09",
+  "description": "Wir suchen Berufseinsteiger. Aufgaben: Koordination von PV-Aufdachprojekten, Netzanschluss mit dem Netzbetreiber, Inbetriebnahme. Kenntnisse in MS Project und SAP. Gute Deutschkenntnisse und Englisch."
+ },
+ {
+  "source": "adzuna",
+  "source_id": "a1",
+  "title": "Junior Projektkoordinator Photovoltaik (w/m/d)",
+  "company": "SonnenBau",
+  "location": "Nürnberg",
+  "url": "https://example.org/1b",
+  "posted": "2026-10-10",
+  "description": "Koordination von PV-Projekten..."
+ },
+ {
+  "source": "arbeitnow",
+  "source_id": "s1",
+  "title": "Project Coordinator Solar EPC",
+  "company": "Helio Parks GmbH",
+  "location": "Berlin (remote)",
+  "url": "https://example.org/2",
+  "posted": "2026-10-06",
+  "description": "You will coordinate utility-scale solar EPC projects: procurement, subcontractor management, commissioning, grid connection. Tools: MS Project, Excel, PVsyst, SharePoint. English required, German is a plus. 2 years experience."
+ },
+ {
+  "source": "bundesagentur",
+  "source_id": "10001-2",
+  "title": "Projektleiter Photovoltaik (m/w/d)",
+  "company": "Freiflächen Energie AG",
+  "location": "Leipzig, Sachsen",
+  "url": "https://example.org/3",
+  "posted": "2026-10-02",
+  "description": "Sie bringen mindestens 5 Jahre Berufserfahrung mit. Verhandlungssichere Deutschkenntnisse (C1) sind erforderlich. Führung von Nachunternehmern, Inbetriebnahme, Netzanschluss."
+ },
+ {
+  "source": "arbeitnow",
+  "source_id": "s2",
+  "title": "Senior Project Manager Solar",
+  "company": "X Corp",
+  "location": "Munich",
+  "url": "https://example.org/4",
+  "posted": "2026-10-10",
+  "description": "solar"
+ },
+ {
+  "source": "arbeitnow",
+  "source_id": "s3",
+  "title": "Project Manager Software Platform",
+  "company": "Fintech AG",
+  "location": "Berlin",
+  "url": "https://example.org/5",
+  "posted": "2026-10-10",
+  "description": "We build banking software."
+ },
+ {
+  "source": "bundesagentur",
+  "source_id": "10001-3",
+  "title": "Werkstudent Projektmanagement PV",
+  "company": "SonnenBau GmbH",
+  "location": "Nürnberg",
+  "url": "https://example.org/6",
+  "posted": "2026-10-10",
+  "description": "photovoltaik"
+ },
+ {
+  "source": "adzuna",
+  "source_id": "a2",
+  "title": "Vertrieb Projektmanager Photovoltaik",
+  "company": "Sunny Sales GmbH",
+  "location": "Hamburg",
+  "url": "https://example.org/7",
+  "posted": "2026-10-08",
+  "description": "Verkauf von PV-Anlagen an Privatkunden."
+ }
+]

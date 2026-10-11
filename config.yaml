@@ -1,0 +1,122 @@
+# Job Radar config for Mayank's search (Jr PM / project coordination in solar PV, Germany).
+# Edit freely; every run re-reads this file.
+
+lookback_days: 14          # ignore postings older than this
+shortlist_size: 25         # rows in SHORTLIST.md
+
+queries:                   # sent to Bundesagentur and Adzuna
+  - Projektkoordinator Photovoltaik
+  - Projektmanager Photovoltaik
+  - Junior Projektleiter Photovoltaik
+  - Projektingenieur Photovoltaik
+  - Projektleiter PV
+  - Projektkoordination Solar
+  - Solar Project Coordinator
+  - Solar Project Manager
+  - PV Project Engineer
+  - Projektmanager Erneuerbare Energien
+
+sources:
+  bundesagentur: {enabled: true, pages_per_query: 2, page_size: 50}
+  arbeitnow: {enabled: true, pages: 6}          # no search param, filtered locally
+  adzuna: {enabled: true, pages_per_query: 1}   # needs ADZUNA_APP_ID / ADZUNA_APP_KEY secrets
+  linkedin_email: {enabled: true, days_back: 3, mailbox: INBOX}  # needs IMAP_USER / IMAP_PASSWORD
+
+# Gate 1: title must contain one of these (case-insensitive substring)
+role_terms_title:
+  - projektkoordinat
+  - project coordinat
+  - projektmanag
+  - project manag
+  - projektleit
+  - project lead
+  - projektingenieur
+  - project engineer
+  - projektassist
+  - project assistant
+  - projektabwicklung
+  - project execution
+  - project delivery
+  - pmo
+  - bauleit             # site/construction management, common entry route in PV EPC
+  - inbetriebnahme
+  - commissioning
+
+# Gate 1: title containing any of these is dropped
+exclude_title_terms:
+  - senior
+  - head of
+  - teamleit
+  - abteilungsleit
+  - director
+  - principal
+  - werkstudent
+  - working student
+  - praktikum
+  - internship
+  - intern
+  - ausbildung
+  - azubi
+  - abschlussarbeit
+  - thesis
+
+# Gate 2: one of these must appear in title, company or description
+domain_terms:
+  - photovoltaik
+  - photovoltaic
+  - solar
+  - " pv"
+  - pv-
+  - aufdach
+  - rooftop
+  - freifläche
+  - agri-pv
+  - wechselrichter
+  - inverter
+  - erneuerbare
+  - renewable
+  - netzanschluss
+  - grid connection
+  - epc
+
+# Tools / skills from the master CV; each found in the JD adds points
+cv_skills:
+  - ms project
+  - primavera
+  - pvsyst
+  - helioscope
+  - autocad
+  - sap
+  - power bi
+  - excel
+  - sharepoint
+  - sitetracker
+  - bom
+  - boq
+  - stückliste
+  - single line
+  - einlinienschaltbild
+  - netzanschluss
+  - grid connection
+  - inbetriebnahme
+  - commissioning
+  - procurement
+  - einkauf
+  - beschaffung
+  - subcontractor
+  - nachunternehmer
+  - qa/qc
+  - hse
+  - risk register
+  - change order
+  - nachtrag
+  - netzbetreiber
+  - grid operator
+  - pumpe
+  - pump
+
+junior_terms: [junior, einsteiger, berufseinsteiger, entry level, entry-level, graduate, absolvent, trainee, young professional]
+
+penalty_title_terms:
+  sales: [vertrieb, sales, energieberater, kundenberater, account manager, außendienst]   # -30
+  trade: [elektriker, elektroniker, monteur, installateur, servicetechniker, handwerker]      # -25
