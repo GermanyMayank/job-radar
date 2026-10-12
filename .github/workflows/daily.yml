@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name "job-radar-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data SHORTLIST.md
+          git add data SHORTLIST.md docs
           git diff --staged --quiet || git commit -m "radar: $(date -u +%F)"
           git pull --rebase --autostash
           git push
