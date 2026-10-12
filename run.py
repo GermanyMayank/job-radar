@@ -10,7 +10,7 @@ from datetime import date, timedelta
 import requests
 import yaml
 
-from radar import output
+from radar import output, site
 from radar.models import Job
 from radar.score import dedupe, domain_gate, score, title_gate
 from radar.sources import adzuna, arbeitnow, bundesagentur, email_alerts, jooble, watchlist
@@ -74,7 +74,8 @@ def main():
     rows = output.update_tracker(jobs, os.path.join(args.out, "data", "tracker.csv"))
     output.write_shortlist(jobs, rows, os.path.join(args.out, "SHORTLIST.md"),
                            cfg["shortlist_size"], {"raw": len(raw), "kept": len(jobs), "by_source": by_source})
-    print("Wrote data/jobs.csv, data/tracker.csv, SHORTLIST.md")
+    site.write_site(jobs, rows, os.path.join(args.out, "docs"), {"raw": len(raw)})
+    print("Wrote data/jobs.csv, data/tracker.csv, SHORTLIST.md, docs/index.html")
 
 
 if __name__ == "__main__":

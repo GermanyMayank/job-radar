@@ -4,7 +4,7 @@ A free, automatic job search for **junior project coordination and project manag
 
 Every morning at 06:30 it collects new postings from job boards, alert emails and solar company career pages, removes duplicates, scores each job against Mayank's CV, and publishes a ranked shortlist.
 
-**👉 Today's results: [SHORTLIST.md](SHORTLIST.md)**
+**👉 Today's results: [germanymayank.github.io/job-radar](https://germanymayank.github.io/job-radar/)** (also as [SHORTLIST.md](SHORTLIST.md))
 
 ---
 
@@ -37,7 +37,7 @@ The email reader opens Gmail **read-only** and only looks at mail from the sende
 
 ## Daily use
 
-1. Open **[SHORTLIST.md](SHORTLIST.md)** (works well in the GitHub mobile app).
+1. Open the **[web page](https://germanymayank.github.io/job-radar/)** (bookmark it on your phone) or **[SHORTLIST.md](SHORTLIST.md)**.
 2. For interesting jobs, paste the posting into the Claude project for a fit check and a tailored CV and cover letter.
 3. Record what you did in **[data/tracker.csv](data/tracker.csv)**: click the file → ✏️ → change `status`:
 
@@ -122,6 +122,7 @@ If the self-test step fails, the radar doesn't run and the previous shortlist st
 
 ```
 SHORTLIST.md            today's ranked jobs (generated)
+docs/index.html         the web page, served by GitHub Pages (generated)
 data/tracker.csv        every job ever found + your status/notes
 data/jobs.csv           all relevant jobs from the latest run (generated)
 data/ats_cache.json     which career-page system each company uses (generated)
@@ -130,6 +131,7 @@ run.py                  pipeline: collect → filter → merge → score → wri
 radar/sources/          one collector per source
 radar/score.py          filters, duplicate merging, scoring
 radar/output.py         shortlist and tracker files
+radar/site.py           the web page
 tests/                  offline self-test, runs before every daily run
 .github/workflows/      daily schedule (GitHub Actions)
 ```
