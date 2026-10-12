@@ -156,6 +156,17 @@ def test_dedupe_company_name_variants():
     out = _dedupe([a, b])
     assert len(out) == 1 and set(out[0].sources) == {"adzuna", "bundesagentur"}
 
+def test_site_page():
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = tempfile.mkdtemp()
+    subprocess.run([sys.executable, "run.py", "--fixtures", "tests/fixtures", "--out", out], cwd=root, check=True, capture_output=True)
+    page = open(os.path.join(out, "docs", "index.html"), encoding="utf-8").read()
+    assert "Project Coordinator Solar EPC" in page and "__DATA__" not in page
+    assert os.path.exists(os.path.join(out, "docs", ".nojekyll"))
+    import json as j, re as r
+    data = j.loads(r.search(r'<script id="data" type="application/json">(.*?)</script>', page, r.S).group(1).replace("<\\/", "</"))
+    assert data["jobs"] and all(k in data["jobs"][0] for k in ("s", "t", "u", "src"))
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_") and name not in ("test_linkedin_parser", "test_linkedin_badge_lines", "test_status_survives_rerun", "test_dedupe_and_sales_penalty"):
